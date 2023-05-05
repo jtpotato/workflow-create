@@ -1,0 +1,15 @@
+{
+  "name": "wf-create-electron",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "devDependencies": {
+    "electron": "^24.2.0",
+    "typescript": "^5.0.4"
+  },
+  "scripts": {
+    "dev": "tsc && electron ."
+  },
+  "author": "",
+  "license": "ISC"
+}
