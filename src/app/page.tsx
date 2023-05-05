@@ -14,13 +14,18 @@ function Home() {
 
   useEffect(() => {
     const urls = files.map((file) => URL.createObjectURL(file));
-    const newSlides: Slide[] = urls.map((url) => ({ background: url }))
+    const newSlides: Slide[] = urls.map((url) => ({ background: url }));
     setSlides([...slides, ...newSlides]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files]);
 
   return (
     <>
+      <p>
+        This web app has only been tested on Chromium based browsers. Other
+        browsers have not been tested and may break functionality in unknown and
+        undocumented ways.
+      </p>
       <FileInput
         files={files}
         onFileInputChange={(event) =>
