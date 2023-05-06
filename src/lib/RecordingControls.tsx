@@ -1,74 +1,49 @@
-import { useEffect, useRef, useState } from "react";
-import { Slide } from "./Slide";
+import { useState, useEffect, useRef } from "react";
 
 type RecordingControlsProps = {
-  slide: Slide;
-};
+  onFinishRecording?: (url: string) => void;
+}
 
-function RecordingControls({ slide }: RecordingControlsProps) {
+const RecordingControls = ({ onFinishRecording = () => {} }: RecordingControlsProps) => {
   const [recording, setRecording] = useState<boolean>(false);
-
-  // Define the constraints for the video stream
-  const constraints = {
-    audio: true,
-    video: true,
-  };
-
-  // Define a variable to hold the MediaStream object
-  const [mediaStream, setMediaStream] = useState<MediaStream>();
-
-  // Define a variable to hold the MediaRecorder object
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder>();
-
-  const videoElement = useRef<HTMLVideoElement>(null);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [mediaRecorderState, setMediaRecorderState] =
+    useState<MediaRecorder | null>(null);
+  const [videoPreviewURL, setVideoPreviewURL] = useState<string>("");
 
   useEffect(() => {
-    if (!slide) {
-      setMediaRecorder(undefined);
-      return;
-    }
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
+      setStream(stream);
+    });
 
     if (recording) {
-      navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-        setMediaStream(stream);
-        let currentMediaRecorder = new MediaRecorder(stream);
-        setMediaRecorder(currentMediaRecorder);
+      const chunks: Blob[] = [];
+      const mediaRecorder = new MediaRecorder(stream!);
+      mediaRecorder.addEventListener("dataavailable", (event) => {
+        chunks.push(event.data);
+      });
+      mediaRecorder.start();
+      setMediaRecorderState(mediaRecorder);
+      console.log("Start recording")
 
-        // Create an array to hold the chunks of recorded video
-        const chunks: Blob[] = [];
-
-        currentMediaRecorder.addEventListener("dataavailable", (event) => {
-          chunks.push(event.data);
-        });
-
-        // Start recording
-        currentMediaRecorder.start();
-
-        currentMediaRecorder.addEventListener("stop", () => {
-          const recordedBlob = new Blob(chunks, { type: "video/webm" });
-          const recordedUrl = URL.createObjectURL(recordedBlob);
-          console.log(recordedUrl);
-
-          // Set the video element's source to the recorded URL
-          videoElement.current!.src = recordedUrl;
-        });
+      mediaRecorder.addEventListener("stop", () => {
+        const blob = new Blob(chunks, { type: "video/webm" });
+        const url = URL.createObjectURL(blob);
+        setVideoPreviewURL(url);
+        onFinishRecording(url);
       });
     } else {
-      if (mediaRecorder) {
-        mediaRecorder?.stop();
-        mediaStream?.getTracks().forEach((track) => track.stop());
-      }
+      console.log("not recording");
+      mediaRecorderState?.stop();
     }
   }, [recording]);
 
   return (
-    <>
-      <button className="bg-gray-400" onClick={() => setRecording(!recording)}>
-        Rec
-      </button>
-      <video ref={videoElement} controls autoPlay />
-    </>
+    <div>
+      <button onClick={() => setRecording(!recording)}>Rec</button>
+      <video src={videoPreviewURL} controls hidden />
+    </div>
   );
-}
+};
 
 export default RecordingControls;

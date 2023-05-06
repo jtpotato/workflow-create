@@ -33,8 +33,14 @@ function Home() {
         }
       />
       <ImgDisplay slides={slides} onSlideChange={setSlideIndex} />
+      <RecordingControls
+        onFinishRecording={(url) => {
+          const newSlides = [...slides];
+          newSlides[slideIndex].video = url;
+          setSlides(newSlides);
+        }}
+      />
       <VideoCanvas slides={slides} selectedImageIndex={slideIndex} />
-      <RecordingControls slide={slides[slideIndex]} />
     </>
   );
 }
