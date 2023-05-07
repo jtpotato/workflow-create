@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Video from "./Video";
-import RecordingIndicator from "./RecordingIndicator";
 import VideoScrollList from "./VideoScrollList";
 import Logo from "../Logo";
+import Support from "../Support";
+import { useRouter } from "next/navigation";
 
 function Record() {
   const [recording, setRecording] = useState(false);
@@ -15,6 +15,8 @@ function Record() {
   const [videoURLs, setVideoURLs] = useState<string[]>([]);
   const webcamPreview = useRef<HTMLVideoElement>(null);
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
+
+  const router = useRouter();
 
   useEffect(() => {
     navigator.mediaDevices
@@ -49,6 +51,10 @@ function Record() {
     navigator.mediaDevices.enumerateDevices().then((devices) => {
       setDevices(devices);
     });
+
+    return () => {
+      console.log("cleaning up")
+    };
   }, []);
 
   useEffect(() => {
@@ -67,6 +73,7 @@ function Record() {
       };
     }
     if (!recording) {
+      console.log(stream)
       mediaRecorder?.stop();
     }
   }, [recording]);
@@ -97,29 +104,29 @@ function Record() {
               muted
               className="w-96 rounded-lg"
               style={{
-                boxShadow: "0 0 50px 15px #FF43F1",
+                boxShadow: "0 0 20px 8px #FF43F1",
               }}
             ></video>
-            <p className="text-neutral-400 text-sm">Preview</p>
           </div>
 
           <div className="flex space-x-4 flex-row">
             <button
               onClick={() => setRecording(!recording)}
-              className={`w-16 h-16 rounded-full flex justify-center items-center hover:brightness-75 ${
+              className={`icon-button ${
                 recording ? "bg-[#FF43F1]" : "bg-white"
               }`}
-              style={recording ? {
-                boxShadow: "0 0 20px 5px #FF43F1",
-              } : {}}
+              style={
+                recording
+                  ? {
+                      boxShadow: "0 0 20px 5px #FF43F1",
+                    }
+                  : {}
+              }
             >
               <span className="material-symbols-outlined">videocam</span>
             </button>
 
-            <button
-              onClick={saveAll}
-              className="bg-white w-16 h-16 flex justify-center items-center rounded-full"
-            >
+            <button onClick={saveAll} className="bg-white icon-button">
               <span className="material-symbols-outlined">save</span>
             </button>
             <div className="h-full flex items-center">
@@ -127,6 +134,7 @@ function Record() {
             </div>
           </div>
           <VideoScrollList videos={videoURLs} deleteVideo={deleteVideo} />
+          <Support />
         </div>
       </div>
     </>

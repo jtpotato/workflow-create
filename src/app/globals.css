@@ -5,3 +5,11 @@
 .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "GRAD" 0;
 }
+
+.icon-button {
+  @apply w-16 h-16 rounded-full flex justify-center items-center hover:brightness-75
+}
+
+.text-button {
+  @apply px-4 py-2 rounded-lg flex justify-center items-center hover:brightness-75
+}
