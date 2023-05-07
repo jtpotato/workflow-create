@@ -95,17 +95,23 @@ function Record() {
               ref={webcamPreview}
               autoPlay
               muted
-              className="w-96 rounded-lg border-4 border-neutral-700"
+              className="w-96 rounded-lg"
+              style={{
+                boxShadow: "0 0 50px 15px #FF43F1",
+              }}
             ></video>
-            <p className="text-neutral-500 text-sm">Preview</p>
+            <p className="text-neutral-400 text-sm">Preview</p>
           </div>
 
           <div className="flex space-x-4 flex-row">
             <button
               onClick={() => setRecording(!recording)}
-              className={`w-16 h-16 rounded-full flex justify-center items-center ${
-                recording ? "bg-red-500" : "bg-white"
+              className={`w-16 h-16 rounded-full flex justify-center items-center hover:brightness-75 ${
+                recording ? "bg-[#FF43F1]" : "bg-white"
               }`}
+              style={recording ? {
+                boxShadow: "0 0 20px 5px #FF43F1",
+              } : {}}
             >
               <span className="material-symbols-outlined">videocam</span>
             </button>
