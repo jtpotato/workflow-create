@@ -6,7 +6,7 @@ function VideoScrollList(props: {
 }) {
   return (
     <div className="flex flex-row justify-center flex-nowrap space-x-4 overflow-x-scroll w-screen">
-      {props.videos.map((url, i) => (
+      {props.videos.map((url: string, i: number) => (
         <Video
           key={i}
           src={url}
